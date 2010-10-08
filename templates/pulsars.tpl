@@ -13,7 +13,14 @@
 <table class="gridtable">
 <tr><th>{$pulsars[mysec].name}</th><tr>
 <tr><td><a href="observation.php?id={$id}&pulsar={$pulsars[mysec].name}"><img src="{$pulsars[mysec].profile}" /></a></td></tr>
+
+<tr><td align="center">
+<table class="inner_gridtable">
+<tr><td>Total Observations<td>{$pulsars[mysec].n_observations}</th><td>
 </table>
+</td></tr>
+</table>
+
 </div>
 
 {/strip}

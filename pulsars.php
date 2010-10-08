@@ -20,7 +20,8 @@ $pulsars_attributes = GetPulsarsAttributes();
 foreach ($pulsars_attributes as $p_attr) {
   $smarty->append('pulsars', array(
     'profile' => $p_attr->profile,
-    'name' => $p_attr->name
+    'name' => $p_attr->name,
+    'n_observations' => $p_attr->n_observations
   ));
 }
 
@@ -57,6 +58,7 @@ function GetPulsarsAttributes()
     $pulsar_attributes = new stdClass();
     $pulsar_attributes->name = $name;
     $pulsar_attributes->profile = WEB_OBSERVATIONS_ADDRESS . $name . '/' . basename($profiles[0]);
+    $pulsar_attributes->n_observations = count($profiles);
 
     $pulsars_attributes[] = $pulsar_attributes;
   }

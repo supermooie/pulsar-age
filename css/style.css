@@ -199,13 +199,14 @@ table.inner_gridtable th {
 table.inner_gridtable td {
   border-width: 1px;
   padding: 5px;
-  /*border-style: solid;*/
-  border-center-style: solid;
+  border-style: none;
+  /*border-center-style: solid;*/
   border-color: #666666;
 }
 
 #pulsar_box {
   margin: 3px;
+  margin-bottom: 10px;
   border-width: 1px;
   border-style: solid;
   border-color: #666666;

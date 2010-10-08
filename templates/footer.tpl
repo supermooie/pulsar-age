@@ -1,4 +1,6 @@
 <div style="clear: both;"> </div>
+<br>
+<br>
 <div id="footer">
     <div id="footer-nav">
         <ul>
