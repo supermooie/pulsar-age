@@ -8,6 +8,7 @@ define('THIS_PAGE', 'pulsars.php');
 define('NEXT_PAGE', WEB_ADDRESS . 'observations.php');
 
 Identifier::Init(THIS_PAGE);
+
 $smarty = new Smarty();
 
 // Defined in 'Config.php'

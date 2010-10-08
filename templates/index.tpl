@@ -2,7 +2,7 @@
 
 {include file="header.tpl" title="Module Two: Introduction"}
 
-<p> Hello, {$name}!
+<p> Introduction to Module Two.
 
 <p> <a href="pulsars.php">Continue</a>
 
