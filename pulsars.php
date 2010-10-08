@@ -35,7 +35,8 @@ $smarty->display('pulsars.tpl');
  *    - pulsar name
  *    - pulse profile link
  *
- * Returns an array of stdClass contain attributes for each PULSE@Parkes pulsar.
+ * Returns an array of stdClass containing attributes for each PULSE@Parkes
+ * pulsar.
  */
 function GetPulsarsAttributes()
 {

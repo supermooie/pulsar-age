@@ -180,6 +180,30 @@ table.gridtable td {
   border-color: #666666;
 }
 
+table.inner_gridtable {
+  font-family: verdana,arial,sans-serif;
+  font-size:12px;
+  color:#333333;
+  border-width: 1px;
+  border-color: #666666;
+  border-collapse: collapse;
+}
+table.inner_gridtable th {
+  text-align: center;
+  border-width: 1px;
+  padding: 5.5px;
+  border-style: solid;
+  border-color: #666666;
+  background-color: #dedede;
+}
+table.inner_gridtable td {
+  border-width: 1px;
+  padding: 5px;
+  /*border-style: solid;*/
+  border-center-style: solid;
+  border-color: #666666;
+}
+
 #pulsar_box {
   margin: 3px;
   border-width: 1px;
@@ -189,9 +213,9 @@ table.gridtable td {
   text-align: center;
 }
 
-#pulsar_box:hover {
+/*#pulsar_box:hover {
     background-color: #393939;
-}
+}*/
 
 
 
