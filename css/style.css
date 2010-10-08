@@ -180,6 +180,19 @@ table.gridtable td {
   border-color: #666666;
 }
 
+#pulsar_box {
+  margin: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #666666;
+  float: left;
+  text-align: center;
+}
+
+#pulsar_box:hover {
+    background-color: #393939;
+}
+
 
 
 

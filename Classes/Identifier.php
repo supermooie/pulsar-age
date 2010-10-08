@@ -18,6 +18,11 @@ class Identifier
     }
   }
 
+  static public function GetId()
+  {
+    return $_REQUEST['id'];
+  }
+
   static public function IdExists($id)
   {
     // open id file
