@@ -28,6 +28,9 @@ define('WEB_OBSERVATIONS_ADDRESS', 'http://pulseatparkes.atnf.csiro.au/Observati
 // Extension for thumbnail images.
 define('SMALL_PROFILE_EXT', 'sm.png');
 
+// Directory (on herschel) for session data. Information, results, plots, etc.
+define('SESSION_DIR', '/var/www/vhosts/pulseatparkes.atnf.csiro.au/htdocs/age/session/');
+
 require_once SMARTY_DIR . 'Smarty.class.php'
 
 ?>
