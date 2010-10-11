@@ -214,6 +214,11 @@ table.inner_gridtable td {
   text-align: center;
 }
 
+#box {
+  clear: both;
+  margin-bottom: 20px;
+}
+
 /*#pulsar_box:hover {
     background-color: #393939;
 }*/

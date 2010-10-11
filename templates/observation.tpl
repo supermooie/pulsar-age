@@ -2,8 +2,11 @@
 
 {include file="header.tpl" title=${pulsar_name}}
 
+<div id="box">
 <p> Information...
+</div>
 
+<div id="box">
 {section name=mysec loop=$observations}
 {strip}
 
@@ -25,5 +28,11 @@
 
 {/strip}
 {/section}
+</div>
+
+<div id="box">
+<p><a href="plot.php?id={$id}&pulsar={$pulsar_name}">Plot</a>
+
+</div>
 
 {include file="footer.tpl"}
