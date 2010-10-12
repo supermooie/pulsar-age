@@ -155,7 +155,6 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
   $delta = ($S * $Sxx) - pow($Sx, 2);
   $a = (($Sxx * $Sy) - ($Sx * $Sxy)) / $delta;
   $b = (($S * $Sxy) - ($Sx * $Sy)) / $delta;
-  echo "$delta $a $b <br>";
 
   // Subtract the slope from the period.
   for ($i = 0; $i < $count; $i++) {
@@ -197,7 +196,7 @@ function CreatePlot($errdatay, $datax, $title, $filename)
   $errplot->line->SetColor("blue");
 
   // Setup the legends
-  $errplot->SetLegend("Period Error");
+  //$errplot->SetLegend("Period Error");
 
   $graph->title->Set($title);
   $graph->title->SetFont(FF_FONT1,FS_BOLD);
