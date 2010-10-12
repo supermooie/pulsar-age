@@ -13,7 +13,10 @@
 
 <div id="box">
 <img src="session/period_vs_mjd_{$id}.png"/>
-<p> (plot/s)
+</div>
+
+<div id="box">
+<img src="session/period_vs_mjd_line_removed_{$id}.png"/>
 </div>
 
 {include file="footer.tpl"}
