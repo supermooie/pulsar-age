@@ -7,6 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="js/jquery.url.js"></script>
   </head>
 
   <body>

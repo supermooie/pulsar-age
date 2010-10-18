@@ -12,7 +12,13 @@
 </div>
 
 <div id="box">
-<img src="session/period_vs_mjd_{$id}.png"/>
+<div id="position">
+hello there
+</div>
+</div>
+
+<div id="box">
+<img id="plot" src="session/period_vs_mjd_{$id}.png"/>
 </div>
 
 <div id="box">

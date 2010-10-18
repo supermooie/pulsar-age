@@ -10,6 +10,8 @@ require_once('Classes/jpgraph/jpgraph_line.php');
 require_once('Classes/jpgraph/jpgraph_error.php');
 
 define('NUMBER_OF_CSV_COLUMNS', 4);
+define('START_X', 140);
+define('END_X', 870);
 
 $smarty = new Smarty();
 $smarty->template_dir = SMARTY_TEMPLATE_DIR;
@@ -18,7 +20,18 @@ $smarty->compile_dir = SMARTY_COMPILE_DIR;
 $pulsar_name = $_REQUEST['pulsar'];
 // TODO: verify pulsar name
 
+if ($_REQUEST['x']) {
+  $mouse_x = $_REQUEST['x'];
+}
+
+if ($_REQUEST['shh']) {
+  $shh = TRUE;
+} else {
+  $shh = FALSE;
+}
+
 $id = Identifier::GetId();
+
 // TODO: verify id 
 
 CreatePlotCsvFile($pulsar_name, $id, TRUE);
@@ -32,9 +45,11 @@ $csv_filename = SESSION_DIR . "period_vs_mjd_line_removed_$id.csv";
 $plot_filename = SESSION_DIR . "period_vs_mjd_line_removed_$id.png";
 CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename);
 
-$smarty->assign('pulsar_name', $pulsar_name);
-$smarty->assign('id', $id);
-$smarty->display('plot.tpl');
+if (!$shh) {
+  $smarty->assign('pulsar_name', $pulsar_name);
+  $smarty->assign('id', $id);
+  $smarty->display('plot.tpl');
+}
 
 /**
  * Reads Observations/<$pulsar name>/*.dat to extract period, period error, and MJD.
@@ -179,8 +194,15 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
 /**
  * Creates a png ($filename) using the arrays for x and y data passed.
  */
-function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE)
+function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, $highlight = null)
 {
+  // TODO: sanity check $highlight
+  if ($_REQUEST['x']) {
+    $highlight = CalculateNearestElementInArray($_REQUEST['x'], $datax);
+    echo "highlight: $hightlight <br>";
+    //$highlight = 2;
+  }
+
   if ($divideBy1000 === TRUE) {
     // Convert all y-axis values from milliseconds to seconds.
     foreach ($errdatay as $datay) {
@@ -188,8 +210,16 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE)
     }
   }
 
+  $x_min = min($datax);
+  $x_max = max($datax);
+  $x_span = $x_max - $x_min;
+
+  // Add 0.05 buffer.
+  $x_min -= 0.02 * $x_span;
+  $x_max += 0.02 * $x_span;
+
   $graph = new Graph(900,500);
-  $graph->SetScale("linlin");
+  $graph->SetScale("linlin", 0, 0, $x_min, $x_max);
 
   $graph->img->SetMargin(70,70,40,40);
   $graph->SetShadow();
@@ -201,17 +231,55 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE)
   $errplot->line->SetWeight(2);
   $errplot->line->SetColor("blue");
 
-  // Setup the legends
-  //$errplot->SetLegend("Period Error");
-
   $graph->title->Set($title);
   $graph->title->SetFont(FF_FONT1,FS_BOLD);
-
   $graph->xaxis->SetTickLabels($MJDs);
+  $graph->xaxis->scale->ticks->Set(90,30);
 
   $graph->Add($errplot);
 
+
+  for ($i = 0; $i < count($errdatay); $i++) {
+    if ($i == 2 || $i == 3) {
+    } else {
+      $errdatay[$i] == 0;
+    }
+  }
+
+  if ($highlight != null) {
+    $highlight_datay = array($errdatay[$highlight*2], $errdatay[$highlight*2 + 1]);
+    $highlight_datax = array($datax[$highlight]);
+
+    $errplot1 = new ErrorLinePlot($highlight_datay, $highlight_datax);
+    $errplot1->SetColor("green");
+    $errplot1->SetWeight(2);
+    $errplot1->SetCenter();
+
+    $graph->Add($errplot1);
+  }
+
   $graph->Stroke($filename);
+}
+
+function CalculateNearestElementInArray($value, $array)
+{
+  $value -= START_X;
+  $array_range = max($array) - min($array);
+  $factor = $array_range / (END_X - START_X);
+
+  $value = $value * $factor + min($array);
+
+  $closest = abs($array[0] - $value);
+  $index = 0;
+
+  for ($i = 1; $i < count($array); $i++) {
+    if (abs($array[$i] - $value) < $closest) {
+      $closest = abs($array[$i] - $value);
+      $index = $i;
+    }
+  }
+
+  return $index;
 }
 
 ?>
