@@ -44,22 +44,22 @@ $smarty->display('plot.tpl');
  */
 function CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename)
 {
-// Read session/period_vs_mjd_<id>.csv.
-if (!file_exists($csv_filename)) {
-  throw Error();
-}
-
-$fh = fopen($csv_filename, 'r');
-while (($data = fgetcsv($fh, 1000, ',')) !== FALSE) {
-  $num = count($data);
-  if ($num !== NUMBER_OF_CSV_COLUMNS) {
+  // Read session/period_vs_mjd_<id>.csv.
+  if (!file_exists($csv_filename)) {
     throw Error();
   }
 
-  $period_and_errors[] = $data[CSV_INDEX::$PERIOD];
-  $period_and_errors[] = $data[CSV_INDEX::$PERIOD_ERROR];
-  $MJDs[]              = $data[CSV_INDEX::$MJD];
-}
+  $fh = fopen($csv_filename, 'r');
+  while (($data = fgetcsv($fh, 1000, ',')) !== FALSE) {
+    $num = count($data);
+    if ($num !== NUMBER_OF_CSV_COLUMNS) {
+      throw Error();
+    }
+
+    $period_and_errors[] = $data[CSV_INDEX::$PERIOD];
+    $period_and_errors[] = $data[CSV_INDEX::$PERIOD_ERROR];
+    $MJDs[]              = $data[CSV_INDEX::$MJD];
+  }
 
   $filename = "session/period_vs_mjd_$id.png";
   $title    = 'Period vs MJD';
@@ -87,13 +87,11 @@ function CreatePlotCsvFile($pulsar_name, $id, $overwrite = FALSE)
       DataFile::GetValues($filename);
   }
 
-  // QUICK FIX: convert errors to the same unit as period
-  // (Bug in pdmp.)
   $fp = fopen($csv_file, 'w');
   foreach ($data_files_contents as $data) {
     $fields = array(
-      $data->period, 
-      $data->period + ($data->period_error / 2.0),
+      $data->period,
+      ($data->period + $data->period_error),
       $data->MJD, 
       '1' // toggle
     );
@@ -160,6 +158,7 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
   for ($i = 0; $i < $count; $i++) {
     $y = $a + ($b * $MJDs[$i]);
     $periods[$i] -= $y;
+    $periods[$i] -= $period_errors[$i] / 2;
   }
 
   // Write the new values into session/period_vs_mjd_line_removed_<id>.csv.
@@ -167,7 +166,7 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
   for ($i = 0; $i < $count; $i++) {
     $fields = array(
       $periods[$i],
-      $periods[$i] + ($period_errors[$i] / 2.0), 
+      $periods[$i] + $period_errors[$i],
       $MJDs[$i],
       '1' // toggle
     );
@@ -180,8 +179,15 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
 /**
  * Creates a png ($filename) using the arrays for x and y data passed.
  */
-function CreatePlot($errdatay, $datax, $title, $filename)
+function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE)
 {
+  if ($divideBy1000 === TRUE) {
+    // Convert all y-axis values from milliseconds to seconds.
+    foreach ($errdatay as $datay) {
+      $datay /= MILLISECONDS_IN_A_SECOND;
+    }
+  }
+
   $graph = new Graph(900,500);
   $graph->SetScale("linlin");
 
