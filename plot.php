@@ -93,7 +93,7 @@ function CreatePlotCsvFile($pulsar_name, $id, $overwrite = FALSE)
   foreach ($data_files_contents as $data) {
     $fields = array(
       $data->period, 
-      $data->period + ($data->period_error * 1000.0 / 2.0),
+      $data->period + ($data->period_error / 2.0),
       $data->MJD, 
       '1' // toggle
     );
