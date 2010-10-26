@@ -8,6 +8,7 @@ require_once('Classes/CSV.php');
 require_once('Classes/jpgraph/jpgraph.php');
 require_once('Classes/jpgraph/jpgraph_line.php');
 require_once('Classes/jpgraph/jpgraph_error.php');
+require_once('Classes/jpgraph/jpgraph_scatter.php');
 
 define('NUMBER_OF_CSV_COLUMNS', 4);
 define('START_X', 140);
@@ -199,8 +200,6 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, 
   // TODO: sanity check $highlight
   if ($_REQUEST['x']) {
     $highlight = CalculateNearestElementInArray($_REQUEST['x'], $datax);
-    echo "highlight: $hightlight <br>";
-    //$highlight = 2;
   }
 
   if ($divideBy1000 === TRUE) {
@@ -224,12 +223,10 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, 
   $graph->img->SetMargin(70,70,40,40);
   $graph->SetShadow();
 
-  $errplot = new ErrorLinePlot($errdatay, $datax);
+  $errplot = new ErrorPlot($errdatay, $datax);
   $errplot->SetColor("red");
   $errplot->SetWeight(2);
   $errplot->SetCenter();
-  $errplot->line->SetWeight(2);
-  $errplot->line->SetColor("blue");
 
   $graph->title->Set($title);
   $graph->title->SetFont(FF_FONT1,FS_BOLD);
@@ -238,6 +235,15 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, 
 
   $graph->Add($errplot);
 
+  $x1 = $datax[0];
+  $x2 = $datax[count($datax)-1];
+  $y1 = $errdatay[0] + ($errdatay[1] - $errdatay[0]) * 0.5;
+  $y2 = $errdatay[count($errdatay)-2] + ($errdatay[count($errdatay)-1] - $errdatay[count($errdatay)-2]) * 0.5;
+
+  $sp1 = new ScatterPlot(array($y1, $y2), array($x1, $x2));
+  $sp1->SetLinkPoints(true,'blue',2 ); 
+  $sp1->mark->SetType(MARK_NONE); 
+  $graph->Add($sp1);
 
   for ($i = 0; $i < count($errdatay); $i++) {
     if ($i == 2 || $i == 3) {
@@ -250,7 +256,7 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, 
     $highlight_datay = array($errdatay[$highlight*2], $errdatay[$highlight*2 + 1]);
     $highlight_datax = array($datax[$highlight]);
 
-    $errplot1 = new ErrorLinePlot($highlight_datay, $highlight_datax);
+    $errplot1 = new LineErrorPlot($highlight_datay, $highlight_datax);
     $errplot1->SetColor("green");
     $errplot1->SetWeight(2);
     $errplot1->SetCenter();
