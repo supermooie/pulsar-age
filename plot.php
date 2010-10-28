@@ -32,8 +32,15 @@ if ($_REQUEST['shh']) {
 }
 
 $id = Identifier::GetId();
-
 // TODO: verify id 
+
+// Gradient of the first period-vs-MJD plot.
+$gradient;
+
+$y_offset;
+
+// The first period in the data set.
+$period;
 
 CreatePlotCsvFile($pulsar_name, $id, TRUE);
 CreatePlotSlopeRemovedCsvFile($id, TRUE);
@@ -44,11 +51,25 @@ CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename);
 
 $csv_filename = SESSION_DIR . "period_vs_mjd_line_removed_$id.csv";
 $plot_filename = SESSION_DIR . "period_vs_mjd_line_removed_$id.png";
-CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename);
+CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename, FALSE);
+
+// Global $gradient has already been calculated here.
+$period_derivative_seconds = $gradient / SECONDS_IN_DAY;
+
+// age(s) = Period(s)/(2 * P_dot(s/s)
+$age_seconds =
+  ($period / MILLISECONDS_IN_A_SECOND) / (2 * $period_derivative_seconds);
+
+$age_myear =
+  $age_seconds / (SECONDS_IN_DAY * 365.25 * 1000000);
 
 if (!$shh) {
   $smarty->assign('pulsar_name', $pulsar_name);
   $smarty->assign('id', $id);
+  $smarty->assign('period_derivative_days', $gradient);
+  $smarty->assign('period_derivative_seconds', $period_derivative_seconds);
+  $smarty->assign('pulsar_age_seconds', $age_seconds);
+  $smarty->assign('pulsar_age_megayear', $age_myear);
   $smarty->display('plot.tpl');
 }
 
@@ -58,7 +79,7 @@ if (!$shh) {
  *
  * Throws any error encountered???
  */
-function CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename)
+function CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename, $draw_fitted_line = TRUE)
 {
   // Read session/period_vs_mjd_<id>.csv.
   if (!file_exists($csv_filename)) {
@@ -79,7 +100,8 @@ function CreatePeriodVsPlot($pulsar_name, $csv_filename, $plot_filename)
 
   $filename = "session/period_vs_mjd_$id.png";
   $title    = 'Period vs MJD';
-  CreatePlot($period_and_errors, $MJDs, $title, $plot_filename);
+  CreatePlot($period_and_errors, $MJDs, $title, $plot_filename,
+    $draw_fitted_line);
 }
 
 /**
@@ -127,7 +149,6 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
   $original_csv_file = SESSION_DIR . "period_vs_mjd_$id.csv";
   $csv_file = SESSION_DIR . "period_vs_mjd_line_removed_$id.csv";
 
-
   // TODO: check if original csv file exists.
   $fh = fopen($original_csv_file, 'r');
   // Read period, period error, and MJD for each observation.
@@ -170,6 +191,16 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
   $a = (($Sxx * $Sy) - ($Sx * $Sxy)) / $delta;
   $b = (($S * $Sxy) - ($Sx * $Sy)) / $delta;
 
+  global $y_offset;
+  $y_offset = $a;
+
+  global $gradient;
+  //$gradient = $b; // Convert from ms to s.
+  $gradient = $b / MILLISECONDS_IN_A_SECOND; // Convert from ms to s.
+
+  global $period;
+  $period = $periods[0];
+
   // Subtract the slope from the period.
   for ($i = 0; $i < $count; $i++) {
     $y = $a + ($b * $MJDs[$i]);
@@ -195,7 +226,7 @@ function CreatePlotSlopeRemovedCsvFile($id, $overwrite = FALSE)
 /**
  * Creates a png ($filename) using the arrays for x and y data passed.
  */
-function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, $highlight = null)
+function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TRUE, $divideBy1000 = FALSE, $highlight = null)
 {
   // TODO: sanity check $highlight
   if ($_REQUEST['x']) {
@@ -204,7 +235,7 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, 
 
   if ($divideBy1000 === TRUE) {
     // Convert all y-axis values from milliseconds to seconds.
-    foreach ($errdatay as $datay) {
+    foreach ($errdatay as &$datay) {
       $datay /= MILLISECONDS_IN_A_SECOND;
     }
   }
@@ -235,28 +266,27 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, 
 
   $graph->Add($errplot);
 
-  $x1 = $datax[0];
-  $x2 = $datax[count($datax)-1];
-  $y1 = $errdatay[0] + ($errdatay[1] - $errdatay[0]) * 0.5;
-  $y2 = $errdatay[count($errdatay)-2] + ($errdatay[count($errdatay)-1] - $errdatay[count($errdatay)-2]) * 0.5;
+  if ($draw_fitted_line === TRUE) {
+    global $y_offset;
+    global $gradient;
 
-  $sp1 = new ScatterPlot(array($y1, $y2), array($x1, $x2));
-  $sp1->SetLinkPoints(true,'blue',2 ); 
-  $sp1->mark->SetType(MARK_NONE); 
-  $graph->Add($sp1);
+    $x1 = $datax[0];
+    $x2 = $datax[count($datax)-1];
 
-  for ($i = 0; $i < count($errdatay); $i++) {
-    if ($i == 2 || $i == 3) {
-    } else {
-      $errdatay[$i] == 0;
-    }
+    $y1 = $y_offset + ($gradient * MILLISECONDS_IN_A_SECOND * $x1);
+    $y2 = $y_offset + ($gradient * MILLISECONDS_IN_A_SECOND * $x2);
+
+    $sp1 = new ScatterPlot(array($y1, $y2), array($x1, $x2));
+    $sp1->SetLinkPoints(true,'blue',2 ); 
+    $sp1->mark->SetType(MARK_NONE); 
+    $graph->Add($sp1);
   }
 
   if ($highlight != null) {
     $highlight_datay = array($errdatay[$highlight*2], $errdatay[$highlight*2 + 1]);
     $highlight_datax = array($datax[$highlight]);
 
-    $errplot1 = new LineErrorPlot($highlight_datay, $highlight_datax);
+    $errplot1 = new ErrorPlot($highlight_datay, $highlight_datax);
     $errplot1->SetColor("green");
     $errplot1->SetWeight(2);
     $errplot1->SetCenter();
@@ -264,6 +294,7 @@ function CreatePlot($errdatay, $datax, $title, $filename, $divideBy1000 = TRUE, 
     $graph->Add($errplot1);
   }
 
+  //$graph->img->SetAntiAliasing(); 
   $graph->Stroke($filename);
 }
 

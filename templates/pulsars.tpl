@@ -12,7 +12,7 @@
 <div id="pulsar_box">
 <table class="gridtable">
 <tr><th>{$pulsars[mysec].name}</th><tr>
-<tr><td><a href="observation.php?id={$id}&pulsar={$pulsars[mysec].name}"><img src="{$pulsars[mysec].profile}" /></a></td></tr>
+<tr><td><a href="observation.php?id={$id}&pulsar={$pulsars[mysec].name_url}"><img src="{$pulsars[mysec].profile}" /></a></td></tr>
 
 <tr><td align="center">
 <table class="inner_gridtable">

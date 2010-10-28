@@ -12,13 +12,19 @@
 </div>
 
 <div id="box">
-<div id="position">
-hello there
-</div>
+<div id="pulsar_box">
+<img id="plot" src="session/period_vs_mjd_{$id}.png"/>
 </div>
 
-<div id="box">
-<img id="plot" src="session/period_vs_mjd_{$id}.png"/>
+<div id="pulsar_box">
+<table class="gridtable">
+<tr><td>Period Derivative (s/day)</td><td>{$period_derivative_days}</td></tr>
+<tr><td>Period Derivative (s/s)</td><td>{$period_derivative_seconds}</td></tr>
+<tr><td>Pulsar Age(s)</td><td>{$pulsar_age_seconds}</td></tr>
+<tr><td>Pulsar Age(Myr)</td><td>{$pulsar_age_megayear}</td></tr>
+</table>
+</div>
+
 </div>
 
 <div id="box">

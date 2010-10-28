@@ -31,7 +31,7 @@
 </div>
 
 <div id="box">
-<p><a href="plot.php?id={$id}&pulsar={$pulsar_name}">Plot</a>
+<p><a class="button" href="plot.php?id={$id}&pulsar={$pulsar_name_url}"><span>Plot</span></a>
 
 </div>
 

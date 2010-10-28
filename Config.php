@@ -33,6 +33,8 @@ define('SESSION_DIR', '/var/www/vhosts/pulseatparkes.atnf.csiro.au/htdocs/age/se
 
 define('MILLISECONDS_IN_A_SECOND', 1000);
 
+define('SECONDS_IN_DAY', 86400);
+
 require_once SMARTY_DIR . 'Smarty.class.php'
 
 ?>

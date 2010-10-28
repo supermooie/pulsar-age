@@ -16,7 +16,6 @@ $smarty->template_dir = SMARTY_TEMPLATE_DIR;
 $smarty->compile_dir = SMARTY_COMPILE_DIR;
 
 $pulsar_name = $_REQUEST['pulsar'];
-
 $observations_attributes = GetObservationsAttributes($pulsar_name);
 
 foreach ($observations_attributes as $o_attr) {
@@ -30,6 +29,7 @@ foreach ($observations_attributes as $o_attr) {
 }
 
 // TODO: check for valid pulsar
+$smarty->assign('pulsar_name_url', urlencode($pulsar_name));
 $smarty->assign('pulsar_name', $pulsar_name);
 $smarty->assign('id', Identifier::GetId());
 $smarty->display('observation.tpl');

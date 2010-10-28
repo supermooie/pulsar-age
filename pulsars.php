@@ -21,6 +21,7 @@ foreach ($pulsars_attributes as $p_attr) {
   $smarty->append('pulsars', array(
     'profile' => $p_attr->profile,
     'name' => $p_attr->name,
+    'name_url' => urlencode($p_attr->name),
     'n_observations' => $p_attr->n_observations
   ));
 }

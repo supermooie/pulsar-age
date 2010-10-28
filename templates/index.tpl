@@ -4,6 +4,6 @@
 
 <p> Introduction to Module Two.
 
-<p> <a href="pulsars.php">Continue</a>
+<p> <a class="button" href="pulsars.php"><span>Continue</span></a>
 
 {include file="footer.tpl"}

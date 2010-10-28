@@ -1,19 +1,14 @@
 * html, body {
-/*width: 95%;*/
-height: 100%;
-  /*cursor: url(ccrosshair.cur);*/
+  height: 100%;
 }
 
 body {
-/*width: 95%;*/
 min-height: 100%;
 height: 100%;
 font-family: Verdana, Arial, Helvetica, sans-serif;
 font-size: 12px;
 line-height: 18px;
 color: #393939;
-/*padding:10px;
-padding-bottom:60px;*/
 }
 
 img { border: none; }
@@ -24,7 +19,6 @@ a:hover { text-decoration: underline; color : #000; }
 #wrap {
 position: relative;
 width: 95%;
-/*min-height: 100%;*/
 height: auto !important;
 height: 100%;
 margin: 10px auto -4em;
@@ -222,6 +216,43 @@ table.inner_gridtable td {
 /*#pulsar_box:hover {
     background-color: #393939;
 }*/
+
+.clear { /* generic container (i.e. div) for floating buttons */
+    overflow: hidden;
+    width: 100%;
+}
+
+a.button {
+    background: transparent url('../images/bg_button_a.gif') no-repeat scroll top right;
+    color: #444;
+    display: block;
+    float: left;
+    font: normal 12px arial, sans-serif;
+    height: 24px;
+    margin-right: 6px;
+    padding-right: 18px; /* sliding doors padding */
+    text-decoration: none;
+}
+
+a.button span {
+    background: transparent url('../images/bg_button_span.gif') no-repeat;
+    display: block;
+    line-height: 14px;
+    padding: 5px 0 5px 18px;
+}
+
+a.button:active {
+    background-position: bottom right;
+    color: #000;
+    outline: none; /* hide dotted outline in Firefox */
+}
+
+a.button:active span {
+    background-position: bottom left;
+    padding: 6px 0 4px 18px; /* push text down 1px */
+}
+
+
 
 
 
