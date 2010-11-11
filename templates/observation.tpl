@@ -3,7 +3,17 @@
 {include file="header.tpl" title=${pulsar_name}}
 
 <div id="box">
-<p> Information...
+<p> Displayed below are the individual pulse profiles of previous {$pulsar_name} observations. Let's take a moment to understand what these parameters are.
+
+<ul>
+<li><b>MJD (days)</b>: The Modified Julian Date (LINK HERE) is what astronomers use to count days. Basically, it's the number of days since 17 November, 1858. </li>
+<li><b>Period (ms)</b>: The amount of time taken for {$pulsar_name} to make one complete rotation. <i>(Change this to seconds.)</i></li>
+<li><b>Period Error (ms)</b>: How accurate the actual period value is. (Smaller is better.)</li>
+</ul>
+
+<p> The next stage of the module is a plot XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
+
+<p> It is important to note that the MJD values here&mdash;and in the upcoming plot&mdash;are in units of days. You may recall that one of the parameters required, pDot(s), needs to be in seconds, so we'll need to do a quick conversion to make this correct.
 </div>
 
 <div id="box">

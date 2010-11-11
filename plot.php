@@ -25,6 +25,17 @@ if ($_REQUEST['x']) {
   $mouse_x = $_REQUEST['x'];
 }
 
+$m;
+$b;
+
+if ($_REQUEST['m']) {
+  $m = $_REQUEST['m'];
+}
+
+if ($_REQUEST['b']) {
+  $b = $_REQUEST['b'];
+}
+
 if ($_REQUEST['shh']) {
   $shh = TRUE;
 } else {
@@ -240,6 +251,18 @@ function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TR
     }
   }
 
+  // Since jpgraph is retarded, decrease all y points by half of the 
+  // corresponding error.
+  $count = count($errdatay);
+  for ($i = 0; $i < $count; $i += 2) {
+    $datay[] = $errdatay[$i];
+
+    $decrease_amount = ($errdatay[$i+1] - $errdatay[$i]) / 2; // period error
+    $errdatay[$i] -= $decrease_amount;
+    $errdatay[$i+1] -= $decrease_amount;
+
+  }
+
   $x_min = min($datax);
   $x_max = max($datax);
   $x_span = $x_max - $x_min;
@@ -255,9 +278,14 @@ function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TR
   $graph->SetShadow();
 
   $errplot = new ErrorPlot($errdatay, $datax);
+
   $errplot->SetColor("red");
   $errplot->SetWeight(2);
   $errplot->SetCenter();
+
+  $sp1 = new ScatterPlot($datay, $datax);
+  $sp1->mark->SetType(MARK_UTRIANGLE); 
+  $graph->Add($sp1);
 
   $graph->title->Set($title);
   $graph->title->SetFont(FF_FONT1,FS_BOLD);
@@ -270,11 +298,18 @@ function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TR
     global $y_offset;
     global $gradient;
 
+    // Gradient and constant passed via query string.
+    global $m;
+    global $b;
+
     $x1 = $datax[0];
     $x2 = $datax[count($datax)-1];
 
-    $y1 = $y_offset + ($gradient * MILLISECONDS_IN_A_SECOND * $x1);
-    $y2 = $y_offset + ($gradient * MILLISECONDS_IN_A_SECOND * $x2);
+    //$y1 = $y_offset + ($gradient * MILLISECONDS_IN_A_SECOND * $x1);
+    //$y2 = $y_offset + ($gradient * MILLISECONDS_IN_A_SECOND * $x2);
+
+    $y1 = $b + ($m * MILLISECONDS_IN_A_SECOND * $x1);
+    $y2 = $b + ($m * MILLISECONDS_IN_A_SECOND * $x2);
 
     $sp1 = new ScatterPlot(array($y1, $y2), array($x1, $x2));
     $sp1->SetLinkPoints(true,'blue',2 ); 
@@ -294,7 +329,6 @@ function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TR
     $graph->Add($errplot1);
   }
 
-  //$graph->img->SetAntiAliasing(); 
   $graph->Stroke($filename);
 }
 

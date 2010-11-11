@@ -4,7 +4,9 @@
 
 {* Table of pulse profiles for each PULSE@Parkes pulsar *}
 
-<p> Information...
+<div id="box">
+<p> What you're looking at is the pulse profile for every PULSE@Parkes pulsar. The pulse profile is simply the shape of the pulsar's bean as it swings by Earth. To make things easier, we want to look for a pulsar that has a single sharp spike&mdash;not a pulsar that is weak (LINK HERE) and/or contains a lot of radio-frequency interference.
+</div>
 
 {section name=mysec loop=$pulsars}
 {strip}
