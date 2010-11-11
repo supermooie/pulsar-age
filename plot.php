@@ -81,6 +81,7 @@ if (!$shh) {
   $smarty->assign('period_derivative_seconds', $period_derivative_seconds);
   $smarty->assign('pulsar_age_seconds', $age_seconds);
   $smarty->assign('pulsar_age_megayear', $age_myear);
+  $smarty->assign('plot_constant', $y_offset);
   $smarty->display('plot.tpl');
 }
 
@@ -263,6 +264,14 @@ function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TR
 
   }
 
+  // #74: change time range to start from 0
+  // Subtract the time of the first observation from each x value.
+  $time_of_first_observation = $datax[0];
+
+  foreach ($datax as &$x) {
+    $x -= $time_of_first_observation;
+  }
+
   $x_min = min($datax);
   $x_max = max($datax);
   $x_span = $x_max - $x_min;
@@ -291,16 +300,19 @@ function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TR
   $graph->title->SetFont(FF_FONT1,FS_BOLD);
   $graph->xaxis->SetTickLabels($MJDs);
   $graph->xaxis->scale->ticks->Set(90,30);
+  $graph->yaxis->HideZeroLabel();
+  $graph->xaxis->HideZeroLabel();
 
   $graph->Add($errplot);
 
-  if ($draw_fitted_line === TRUE) {
+  global $m;
+  global $b;
+
+  if ($draw_fitted_line === TRUE && isset($m)) {
     global $y_offset;
     global $gradient;
 
     // Gradient and constant passed via query string.
-    global $m;
-    global $b;
 
     $x1 = $datax[0];
     $x2 = $datax[count($datax)-1];
@@ -310,6 +322,9 @@ function CreatePlot($errdatay, $datax, $title, $filename, $draw_fitted_line = TR
 
     $y1 = $b + ($m * MILLISECONDS_IN_A_SECOND * $x1);
     $y2 = $b + ($m * MILLISECONDS_IN_A_SECOND * $x2);
+
+    //$y1 = $y_offset + ($m * MILLISECONDS_IN_A_SECOND * $x1);
+    //$y2 = $y_offset + ($m * MILLISECONDS_IN_A_SECOND * $x2);
 
     $sp1 = new ScatterPlot(array($y1, $y2), array($x1, $x2));
     $sp1->SetLinkPoints(true,'blue',2 ); 
